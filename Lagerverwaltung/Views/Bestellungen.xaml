@@ -1,0 +1,68 @@
+﻿<Window x:Class="Lagerverwaltung.Views.Bestellungen"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Lagerverwaltung.Views"
+        mc:Ignorable="d"
+        Title="Bestellungen erfassen" Height="450" Width="800">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Eingabefelder -->
+        <StackPanel Orientation="Vertical" Grid.Row="0" Margin="0,0,0,10">
+            <StackPanel Orientation="Horizontal" Margin="0,5">
+                <TextBlock Text="Bestelldatum:" Width="120"/>
+                <DatePicker Name="dpBestelldatum" Width="200"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,5">
+                <TextBlock Text="Bestellmenge:" Width="120"/>
+                <TextBox Name="txtBestellmenge" Width="200"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,5">
+                <TextBlock Text="Typ:" Width="120"/>
+                <ComboBox Name="cbTyp" Width="200" IsEditable="True" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,5">
+                <TextBlock Text="Wert:" Width="120"/>
+                <TextBox Name="txtWert" Width="200"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,5">
+                <TextBlock Text="Bezeichnung:" Width="120"/>
+                <TextBox Name="txtBezeichnung" Width="200"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,5">
+                <TextBlock Text="Preis:" Width="120"/>
+                <TextBox Name="txtPreis" Width="200"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,5">
+                <TextBlock Text="Lieferant:" Width="120"/>
+                <TextBox Name="txtLieferant" Width="200"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,5">
+                <TextBlock Text="Bestellnummer:" Width="120"/>
+                <TextBox Name="txtBestellnummer" Width="200"/>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Tabelle mit allen Bestellungen -->
+        <DataGrid Name="dgBestellungen" Grid.Row="1" AutoGenerateColumns="True" CanUserAddRows="False"/>
+
+        <!-- Buttons -->
+        <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Right" Margin="0,10,0,0">
+            <Button Content="Speichern" Width="100" Margin="0,0,10,0" Click="Speichern_Click"/>
+            <Button Content="Schließen" Width="100" Click="Close_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>
