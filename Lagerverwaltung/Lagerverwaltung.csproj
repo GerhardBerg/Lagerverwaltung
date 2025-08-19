@@ -55,15 +55,22 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Data\Command-Helfer.cs" />
     <Compile Include="Data\DatabaseHelper.cs" />
     <Compile Include="Views\Lager.xaml.cs">
       <DependentUpon>Lager.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\LagerEditWindow.xaml.cs">
+      <DependentUpon>LagerEditWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TeilenummerDialog.xaml.cs">
       <DependentUpon>TeilenummerDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Warenausgang.xaml.cs">
       <DependentUpon>Warenausgang.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\WarenausgangDialog.xaml.cs">
+      <DependentUpon>WarenausgangDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Wareneingang.xaml.cs">
       <DependentUpon>Wareneingang.xaml</DependentUpon>
@@ -73,6 +80,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Lager.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\LagerEditWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -96,6 +107,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Warenausgang.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\WarenausgangDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

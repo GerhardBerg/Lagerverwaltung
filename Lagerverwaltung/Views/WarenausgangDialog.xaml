@@ -1,0 +1,49 @@
+﻿<Window x:Class="Lagerverwaltung.Views.WarenausgangDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Lagerverwaltung.Views"
+        mc:Ignorable="d"
+        Title="WarenausgangDialog" Height="200" Width="300">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- Info -->
+            <RowDefinition Height="Auto"/>
+            <!-- Menge -->
+            <RowDefinition Height="Auto"/>
+            <!-- Projekt -->
+            <RowDefinition Height="Auto"/>
+            <!-- Kunde -->
+            <RowDefinition Height="Auto"/>
+            <!-- Button -->
+        </Grid.RowDefinitions>
+
+        <!-- Position anzeigen -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,10">
+            <TextBlock x:Name="txtPositionInfo" FontWeight="Bold"/>
+        </StackPanel>
+
+        <!-- Menge -->
+        <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="0,0,0,5">
+            <Label Content="Menge:" Width="80"/>
+            <TextBox x:Name="txtMenge" Width="150"/>
+        </StackPanel>
+
+        <!-- Projekt -->
+        <StackPanel Orientation="Horizontal" Grid.Row="2" Margin="0,0,0,5">
+            <Label Content="Projekt:" Width="80"/>
+            <TextBox x:Name="txtProjekt" Width="150"/>
+        </StackPanel>
+
+        <!-- Kunde -->
+        <StackPanel Orientation="Horizontal" Grid.Row="3" Margin="0,0,0,5">
+            <Label Content="Kunde:" Width="80"/>
+            <TextBox x:Name="txtKunde" Width="150"/>
+        </StackPanel>
+
+        <!-- Button -->
+        <Button Content="Buchen" Width="80" Height="25" Grid.Row="4" HorizontalAlignment="Right" Click="BtnBuchen_Click"/>
+    </Grid>
+</Window>

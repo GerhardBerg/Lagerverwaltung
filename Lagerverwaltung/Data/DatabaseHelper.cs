@@ -30,19 +30,35 @@ namespace Lagerverwaltung.Data
             return dt;
         }
 
-        // Abfragen, die nichts zurückgeben (z. B. INSERT, UPDATE, DELETE)
-        public static void ExecuteNonQuery(string query)
+        public static DataTable ExecuteQuery(string sql, params SqlParameter[] parameters)
         {
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (var connection = new SqlConnection(connectionString))
+            using (var command = new SqlCommand(sql, connection))
             {
-                conn.Open();
-                using (SqlCommand cmd = new SqlCommand(query, conn))
+                if (parameters != null && parameters.Length > 0)
+                    command.Parameters.AddRange(parameters);
+
+                using (var adapter = new SqlDataAdapter(command))
                 {
-                    cmd.ExecuteNonQuery();
+                    var dt = new DataTable();
+                    adapter.Fill(dt);
+                    return dt;
                 }
             }
         }
+        // Abfragen, die nichts zurückgeben (z. B. INSERT, UPDATE, DELETE)
+        public static int ExecuteNonQuery(string query, params SqlParameter[] parameters)
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                if (parameters != null && parameters.Length > 0)
+                    cmd.Parameters.AddRange(parameters);
 
+                conn.Open();
+                return cmd.ExecuteNonQuery();
+            }
+        }
         public static T ExecuteScalar<T>(string sql, params SqlParameter[] parameters)
         {
             using (var con = new SqlConnection(connectionString))

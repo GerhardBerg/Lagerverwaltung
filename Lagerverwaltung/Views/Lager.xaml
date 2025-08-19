@@ -5,8 +5,73 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Lagerverwaltung.Views"
         mc:Ignorable="d"
-        Title="Lager" Height="450" Width="800">
-    <Grid>
-        
+        Title="Lagerübersicht" Height="500" Width="1550">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- Filter -->
+            <RowDefinition Height="*"/>
+            <!-- DataGrid -->
+            <RowDefinition Height="Auto"/>
+            <!-- Button -->
+        </Grid.RowDefinitions>
+
+        <!-- Filter-ComboBoxen -->
+        <StackPanel Orientation="Horizontal" Margin="10" VerticalAlignment="Top">
+            <StackPanel Margin="5">
+                <TextBlock Text="Typ" FontWeight="Bold" />
+                <ComboBox x:Name="cmbTypFilter" Width="150"
+                  SelectionChanged="Filter_SelectionChanged"/>
+            </StackPanel>
+
+            <StackPanel Margin="5">
+                <TextBlock Text="Wert" FontWeight="Bold" />
+                <ComboBox x:Name="cmbWertFilter" Width="150"
+                  SelectionChanged="Filter_SelectionChanged"/>
+            </StackPanel>
+
+            <StackPanel Margin="5">
+                <TextBlock Text="Bezeichnung" FontWeight="Bold" />
+                <ComboBox x:Name="cmbBezeichnungFilter" Width="200"
+                  SelectionChanged="Filter_SelectionChanged"/>
+            </StackPanel>
+            
+            <StackPanel Margin="5">
+                <TextBlock Text="" FontWeight="Bold" />
+
+                <!-- Button zum Zurücksetzen -->
+                <Button x:Name="btnResetFilter" Content="⟲ Filter zurücksetzen"
+             Padding="2" Height="22" FontSize="8"
+            Click="BtnResetFilter_Click"/>
+            </StackPanel>
+        </StackPanel>
+
+        <DataGrid x:Name="dgLager"
+          Grid.Row="1"
+          AutoGenerateColumns="False"
+          CanUserAddRows="False"
+          IsReadOnly="False"  
+          SelectionMode="Extended"
+          SelectionUnit="FullRow">
+
+        <DataGrid.Columns>
+            <DataGridTextColumn Header="Teilenummer" Binding="{Binding Teilenummer}" IsReadOnly="True"/>
+            <DataGridTextColumn Header="Typ" Binding="{Binding Typ}" IsReadOnly="True"/>
+            <DataGridTextColumn Header="Wert" Binding="{Binding Wert}" IsReadOnly="True"/>
+            <DataGridTextColumn Header="Menge" Binding="{Binding Menge}" IsReadOnly="True"/>
+            <DataGridTextColumn Header="Bezeichnung" Binding="{Binding Bezeichnung}" IsReadOnly="True"/>
+            <DataGridTextColumn Header="Einzelpreis" Binding="{Binding Einzelpreis, StringFormat={}{0:N2}}" IsReadOnly="True"/>
+            <DataGridTextColumn Header="Minimum" Binding="{Binding Lagermenge_min}" IsReadOnly="True"/>
+            <DataGridTextColumn Header="Maximum" Binding="{Binding Lagermenge_max}" IsReadOnly="True"/>
+            <DataGridTextColumn Header="Lagerplatz" Binding="{Binding Lagerplatz}" IsReadOnly="True"/>
+            <DataGridTextColumn Header="Letzte Aktualisierung" Binding="{Binding Letzte_Aktualisierung, StringFormat=\{0:dd.MM.yyyy\}}" IsReadOnly="True"/>
+        </DataGrid.Columns>
+    </DataGrid>
+        <StackPanel Margin="0,10,0,0" Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" >
+            <Button Content="Position ändern" Width="120" Height="30" Margin="10,10,0,0" Grid.Row="2" HorizontalAlignment="Stretch" Click="BtnPositionAendern_Click"/>
+            <Button Content="Ausbuchen" Width="120" Height="30" Margin="10,10,0,0" Click="BtnAusbuchen_Click" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
+            <Button Content="Schliessen" Width="120" Height="30" Margin="10,10,0,0" Click="BtnSchliessen_Click" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
+        </StackPanel>
     </Grid>
+        
 </Window>

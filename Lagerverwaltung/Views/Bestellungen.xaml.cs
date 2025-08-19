@@ -38,7 +38,7 @@ namespace Lagerverwaltung.Views
         }
         private void LadeBestellungen()
         {
-            dgBestellungen.ItemsSource = DatabaseHelper.ExecuteQuery("SELECT * FROM Bestellung").DefaultView;
+            dgBestellungen.ItemsSource = DatabaseHelper.ExecuteQuery("SELECT * FROM Bestellung where Status='bestellt'").DefaultView;
         }
 
         private void Close_Click(object sender, RoutedEventArgs e)

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Lagerverwaltung.Views"
         mc:Ignorable="d"
-        Title="Bestellungen erfassen" Height="450" Width="800">
+        Title="Bestellungen erfassen" Height="450" Width="1200">
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -23,11 +23,13 @@
             <StackPanel Orientation="Horizontal" Margin="0,5">
                 <TextBlock Text="Bestellmenge:" Width="120"/>
                 <TextBox Name="txtBestellmenge" Width="200"/>
+                <TextBlock Text="z.B. 10 " Margin ="10,0,0,0" Width="200"/>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Margin="0,5">
                 <TextBlock Text="Typ:" Width="120"/>
                 <ComboBox Name="cbTyp" Width="200" IsEditable="True" />
+                <TextBlock Text="Auswählen oder neuen Typ eingeben" Width="200" Margin ="10,0,0,0" />
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Margin="0,5">
@@ -43,6 +45,7 @@
             <StackPanel Orientation="Horizontal" Margin="0,5">
                 <TextBlock Text="Preis:" Width="120"/>
                 <TextBox Name="txtPreis" Width="200"/>
+                <TextBlock Text="Punkt nicht Komma 10.20" Width="200" Margin ="10,0,0,0" />
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Margin="0,5">

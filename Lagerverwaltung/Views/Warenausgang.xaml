@@ -5,8 +5,51 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Lagerverwaltung.Views"
         mc:Ignorable="d"
-        Title="Warenausgang" Height="450" Width="800">
-    <Grid>
-        
+        Title="Warenausgang" Height="600" Width="1200">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Filterbereich -->
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+            <StackPanel Margin="0,0,20,0">
+                <TextBlock Text="Projekt" Margin="0,0,0,5"/>
+                <ComboBox x:Name="cmbProjektFilter" Width="150" SelectionChanged="Filter_SelectionChanged"/>
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="Kunde" Margin="0,0,0,5"/>
+                <ComboBox x:Name="cmbKundeFilter" Width="150" SelectionChanged="Filter_SelectionChanged"/>
+            </StackPanel>
+            <Button Content="Filter zurücksetzen" Width="140" Height="20" Margin="20,20,0,0"
+                    HorizontalAlignment="Left" Click="BtnResetFilter_Click"/>
+            <Button Content="schliessen" Width="140" Height="20" Margin="400,20,0,0"
+                    HorizontalAlignment="Right" Click="BtnCancel_Click"/>
+        </StackPanel>
+
+        <!-- DataGrid -->
+        <DataGrid x:Name="dgWarenausgang" Grid.Row="1" AutoGenerateColumns="False" IsReadOnly="True"
+                  CanUserAddRows="False" SelectionMode="Single" Margin="0,0,0,10">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="lfd Nr" Binding="{Binding lfd_Nr}" Width="Auto"/>
+                <DataGridTextColumn Header="Buchungsdatum" Binding="{Binding Buchungsdatum, StringFormat=dd.MM.yyyy}" Width="Auto"/>
+                <DataGridTextColumn Header="Teilenummer" Binding="{Binding Teilenummer}" Width="Auto"/>
+                <DataGridTextColumn Header="Menge" Binding="{Binding Menge}" Width="Auto"/>
+                <DataGridTextColumn Header="Typ" Binding="{Binding Typ}" Width="Auto"/>
+                <DataGridTextColumn Header="Wert" Binding="{Binding Wert}" Width="Auto"/>
+                <DataGridTextColumn Header="Bezeichnung" Binding="{Binding Bezeichnung}" Width="*"/>
+                <DataGridTextColumn Header="Projekt" Binding="{Binding Projekt}" Width="Auto"/>
+                <DataGridTextColumn Header="Kunde" Binding="{Binding Kunde}" Width="Auto"/>
+                <DataGridTextColumn Header="Einzelpreis" Binding="{Binding Einzelpreis, StringFormat=N2}" Width="Auto"/>
+                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="Auto"/>
+                <DataGridTextColumn Header="Gesamtpreis" Binding="{Binding Gesamtpreis, StringFormat=N2}" Width="Auto"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Summe unten -->
+        <TextBlock x:Name="txtSumme" Grid.Row="2" FontWeight="Bold" FontSize="14"
+                   HorizontalAlignment="Right" Text="Summe: 0,00 €"/>
     </Grid>
 </Window>

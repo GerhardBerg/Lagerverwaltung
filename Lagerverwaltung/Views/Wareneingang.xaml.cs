@@ -85,7 +85,7 @@ namespace Lagerverwaltung.Views
                 MessageBox.Show("Bitte mindestens einen Wareneingang auswählen.");
                 return;
             }
-
+            int wertCount = 0;
             foreach (var wareneingang in ausgewählte)
             {
                 //als erstes schauen ob es den Typ schon gibt, wenn nicht Eingabefenster von Teiletypnummer (E,010=Widerstand,001=erster Typ wird automatisch vergeben)
@@ -96,29 +96,93 @@ namespace Lagerverwaltung.Views
                     new SqlParameter("@Typ", wareneingang.Typ)
                 );
                 string teilenummer = null;
-                if (vorhandene == 0) 
+                if (vorhandene == 0)
                 {
                     // 2. Benutzer nach Teilenummer fragen
                     var dialog = new TeileNummerDialog(); // eigenes kleines WPF-Fenster
                     if (dialog.ShowDialog() == true)
                     {
-                        teilenummer = dialog.Teilenummer;
+                        teilenummer = dialog.Teilenummer + "001";
+                    }
+                    decimal einzelpreis = wareneingang.Preis / wareneingang.Bestellmenge;
+
+                    string sqlInsert = @"INSERT INTO Lager (Teilenummer,Typ, Wert, Menge, Bezeichnung, Einzelpreis, letzte_Aktualisierung) 
+                                     VALUES (@Teilenummer, @Typ, @Wert,  @Menge, @Bezeichnung, @Preis, @Datum)";
+                    DatabaseHelper.ExecuteNonQuery(sqlInsert,
+                        new SqlParameter("@Teilenummer", teilenummer),
+                        new SqlParameter("@Typ", wareneingang.Typ),
+                        new SqlParameter("@Wert", wareneingang.Wert),
+                        new SqlParameter("@Bezeichnung", wareneingang.Bezeichnung),
+                        new SqlParameter("@Menge", wareneingang.Bestellmenge),
+                        new SqlParameter("@Preis", einzelpreis),
+                        new SqlParameter("@Datum", DateTime.Now));
+                }
+                else
+                {
+                    //Typ ist vorhanden
+                    string checkSql2 = "SELECT COUNT(*) FROM Lager WHERE Typ = @Typ AND Wert = @Wert";
+                    wertCount = Convert.ToInt32(DatabaseHelper.ExecuteScalar<int>(checkSql2,
+                        new SqlParameter("@Typ", wareneingang.Typ),
+                        new SqlParameter("@Wert", wareneingang.Wert)));
+
+                    if (wertCount > 0)
+                    {
+                        // 3a. Wenn Typ + Wert vorhanden → Menge addieren
+                        string sqlUpdate = @"UPDATE Lager 
+                                        SET Menge = Menge + @Menge 
+                                        WHERE Typ = @Typ AND Wert = @Wert";
+                        DatabaseHelper.ExecuteNonQuery(sqlUpdate,
+                            new SqlParameter("@Menge", wareneingang.Bestellmenge),
+                            new SqlParameter("@Typ", wareneingang.Typ),
+                            new SqlParameter("@Wert", wareneingang.Wert));
+                    }
+                    {
+                        // 3b. Wenn Typ da, aber Wert nicht → neuen Artikel anlegen
+                        // 1. Präfix der Teilenummer holen (z.B. "E021")
+                        //   Angenommen: Du hast mindestens eine vorhandene Teilenummer in Lager für diesen Typ
+                        string prefix = DatabaseHelper.ExecuteScalar<string>(
+                            "SELECT TOP 1 LEFT(Teilenummer, LEN(Teilenummer) - 3) " +
+                            "FROM Lager WHERE Typ = @Typ ORDER BY Teilenummer DESC",
+                            new SqlParameter("@Typ", wareneingang.Typ)
+                        );
+
+                        // 2. Höchste Zahl am Ende holen
+                        int maxNummer = DatabaseHelper.ExecuteScalar<int>(
+                            "SELECT ISNULL(MAX(CAST(RIGHT(Teilenummer, 3) AS INT)), 0) " +
+                            "FROM Lager WHERE Typ = @Typ",
+                            new SqlParameter("@Typ", wareneingang.Typ)
+                        );
+
+                        // 3. Neue Nummer berechnen
+                        int neueNummer = maxNummer + 1;
+
+                        // 4. Neue Teilenummer zusammensetzen → Präfix + neueNummer
+                        string neueTeilenummer = prefix + neueNummer.ToString("D3");
+
+                        string sqlInsert = @"INSERT INTO Lager (Teilenummer,Typ, Wert, Menge, Bezeichnung, Einzelpreis, letzte_Aktualisierung) 
+                                     VALUES (@Teilenummer, @Typ, @Wert,  @Menge, @Bezeichnung, @Preis, @Datum)";
+                        DatabaseHelper.ExecuteNonQuery(sqlInsert,
+                            new SqlParameter("@Teilenummer", neueTeilenummer),
+                            new SqlParameter("@Typ", wareneingang.Typ),
+                            new SqlParameter("@Wert", wareneingang.Wert),
+                            new SqlParameter("@Bezeichnung", wareneingang.Bezeichnung),
+                            new SqlParameter("@Menge", wareneingang.Bestellmenge),
+                            new SqlParameter("@Preis", wareneingang.Preis),
+                            new SqlParameter("@Datum", DateTime.Now));
                     }
 
                 }
-                else
-                { 
-
-                }
 
 
-
-
+                // Zum Schluss: Status im Wareneingang auf "gebucht" setzen
+                string sqlUpdateStatus = "UPDATE Wareneingang SET Status = 'gebucht' WHERE lfd_Nr = @Id";
+                DatabaseHelper.ExecuteNonQuery(sqlUpdateStatus,
+                    new SqlParameter("@Id", wareneingang.lfd_Nr));
 
 
 
-                }
-
+            }
+            LadeWareneingang();
         }
         private void BtnUebernehmen_Click(object sender, RoutedEventArgs e)
         {
@@ -158,7 +222,7 @@ namespace Lagerverwaltung.Views
 
             MessageBox.Show("Wareneingang erfolgreich übernommen.");
             LadeBestellungen();
-            //LadeWareneingang();
+            LadeWareneingang();
         }
 
         private void Close_Click(object sender, RoutedEventArgs e)
