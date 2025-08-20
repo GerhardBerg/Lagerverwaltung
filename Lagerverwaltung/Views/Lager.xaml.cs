@@ -12,27 +12,30 @@ namespace Lagerverwaltung.Views
 {
     public partial class Lager : Window
     {
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            LoadFilters();
-            LoadLager();
-        }
-        private void LoadFilters()
-        {
-            // Typ laden
-            var dtTyp = DatabaseHelper.ExecuteQuery("SELECT DISTINCT Typ FROM Lager");
-            var typList = dtTyp.AsEnumerable()
-                               .Select(r => r["Typ"].ToString())
-                               .ToList();
+        bool aktualisiert = false;
+        bool zurücksetzen = false;
+        private List<LagerItem> lagerListe = new List<LagerItem>();
+        //private void Window_Loaded(object sender, RoutedEventArgs e)
+        //{
+        //    LoadFilters();
+        //    LoadLager();
+        //}
+        //private void LoadFilters()
+        //{
+        //    // Typ laden
+        //    var dtTyp = DatabaseHelper.ExecuteQuery("SELECT DISTINCT Typ FROM Lager");
+        //    var typList = dtTyp.AsEnumerable()
+        //                       .Select(r => r["Typ"].ToString())
+        //                       .ToList();
 
-            typList.Insert(0, "Bitte wählen");
-            cmbTypFilter.ItemsSource = typList;
-            cmbTypFilter.SelectedIndex = 0;
+        //    typList.Insert(0, "Bitte wählen");
+        //    cmbTypFilter.ItemsSource = typList;
+        //    cmbTypFilter.SelectedIndex = 0;
 
-            // Wert und Bezeichnung erstmal leer setzen
-            cmbWertFilter.ItemsSource = null;
-            cmbBezeichnungFilter.ItemsSource = null;
-        }
+        //    // Wert und Bezeichnung erstmal leer setzen
+        //    cmbWertFilter.ItemsSource = null;
+        //    cmbBezeichnungFilter.ItemsSource = null;
+        //}
         private void LoadDependentFilter(string selectedTyp)
         {
             if (selectedTyp == "Bitte wählen")
@@ -126,8 +129,6 @@ namespace Lagerverwaltung.Views
 
             //dgLager.ItemsSource = DatabaseHelper.ExecuteQuery(query, parameters.ToArray()).DefaultView;
         }
-        bool aktualisiert = false;
-        bool zurücksetzen = false;
         private void Filter_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             string comboBoxName = "";
@@ -153,9 +154,7 @@ namespace Lagerverwaltung.Views
             }
             LoadLager();
             aktualisiert = false;
-        }
-
-        private List<LagerItem> lagerListe = new List<LagerItem>();
+        }       
         public Lager()
         {
             InitializeComponent();
@@ -236,47 +235,6 @@ namespace Lagerverwaltung.Views
                 MessageBox.Show("Ausgewählte Positionen wurden ausgebucht.");
                 Filter_SelectionChanged(null, null);
             }
-            //    var ausgewaehlt = ((List<LagerItem>)dgLager.ItemsSource)
-            //        .Where(x => x.IsSelected)
-            //        .ToList();
-
-            //if (ausgewaehlt.Count == 0)
-            //{
-            //    MessageBox.Show("Bitte mindestens eine Position auswählen!");
-            //    return;
-            //}
-
-            //foreach (var row in ausgewaehlt)
-            //{
-                //WarenausgangDialog dialog = new WarenausgangDialog(
-                //    row.Teilenummer, row.Typ, row.Wert, row.Bezeichnung, row.Menge);
-                //if (dialog.ShowDialog() != true) continue;
-                //int ausbuchMenge = dialog.Menge;
-                //if (ausbuchMenge > row.Menge) ausbuchMenge = row.Menge;
-
-                //string projekt = dialog.Projekt;
-                //string kunde = dialog.Kunde;
-
-                // Lager aktualisieren
-                //int neueMenge = row.Menge - ausbuchMenge;
-                //string sqlLager = @"UPDATE Lager 
-                //                    SET Menge = " + neueMenge + @", letzte_Aktualisierung = '" + DateTime.Now.ToString("yyyy-MM-dd") + @"'
-                //                    WHERE Teilenummer = '" + row.Teilenummer.Replace("'", "''") + "'";
-                //DatabaseHelper.ExecuteQuery(sqlLager);
-
-                // Warenausgang eintragen
-                //string sqlAusgang = @"INSERT INTO Warenausgang (Buchungsdatum, Teilenummer, Menge, Projekt, Kunde, Status)
-                //                      VALUES ('" + DateTime.Now.ToString("yyyy-MM-dd") + @"',
-                //                              '" + row.Teilenummer.Replace("'", "''") + @"',
-                //                              " + ausbuchMenge + @",
-                //                              '" + projekt.Replace("'", "''") + @"',
-                //                              '" + kunde.Replace("'", "''") + @"',
-                //                              'gebucht')";
-                //DatabaseHelper.ExecuteQuery(sqlAusgang);
-            //}
-
-            //MessageBox.Show("Ausgewählte Positionen wurden ausgebucht.");
-            //Filter_SelectionChanged(null, null);
         }
         private void BtnResetFilter_Click(object sender, RoutedEventArgs e)
         {
@@ -329,7 +287,6 @@ namespace Lagerverwaltung.Views
                 }
             }
         }       
-
         private void BtnSchliessen_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
