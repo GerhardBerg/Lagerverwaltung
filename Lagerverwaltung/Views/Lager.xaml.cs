@@ -198,58 +198,85 @@ namespace Lagerverwaltung.Views
             var bezeichnungen = lagerListe.Select(x => x.Bezeichnung).Distinct().OrderBy(x => x).ToList();
             cmbBezeichnungFilter.ItemsSource = bezeichnungen;
         }
-        //private void ChkSelectAll_Click(object sender, RoutedEventArgs e)
-        //{
-        //    bool check = (chkSelectAll.IsChecked == true);
-        //    foreach (var item in (List<LagerItem>)dgLager.ItemsSource)
-        //        item.IsSelected = check;
-
-        //    dgLager.Items.Refresh();
-        //}
         private void BtnAusbuchen_Click(object sender, RoutedEventArgs e)
         {
-            var ausgewaehlt = ((List<LagerItem>)dgLager.ItemsSource)
-                    .Where(x => x.IsSelected)
-                    .ToList();
-
-            if (ausgewaehlt.Count == 0)
-            {
-                MessageBox.Show("Bitte mindestens eine Position auswählen!");
-                return;
-            }
-
-            foreach (var row in ausgewaehlt)
+            if (dgLager.SelectedItem is LagerItem selectedItem)
             {
                 WarenausgangDialog dialog = new WarenausgangDialog(
-                    row.Teilenummer, row.Typ, row.Wert, row.Bezeichnung, row.Menge);
-                if (dialog.ShowDialog() != true) continue;
+                    selectedItem.Teilenummer, selectedItem.Typ, selectedItem.Wert, selectedItem.Bezeichnung, selectedItem.Menge);
+                if (dialog.ShowDialog() == true)
+                {
+                    int ausbuchMenge = dialog.Menge;
+                    if (ausbuchMenge > selectedItem.Menge) ausbuchMenge = selectedItem.Menge;
 
-                int ausbuchMenge = dialog.Menge;
-                if (ausbuchMenge > row.Menge) ausbuchMenge = row.Menge;
+                    string projekt = dialog.Projekt;
+                    string kunde = dialog.Kunde;
 
-                string projekt = dialog.Projekt;
-                string kunde = dialog.Kunde;
-
-                // Lager aktualisieren
-                int neueMenge = row.Menge - ausbuchMenge;
-                string sqlLager = @"UPDATE Lager 
+                    // Lager aktualisieren
+                    int neueMenge = selectedItem.Menge - ausbuchMenge;
+                    string sqlLager = @"UPDATE Lager 
                                     SET Menge = " + neueMenge + @", letzte_Aktualisierung = '" + DateTime.Now.ToString("yyyy-MM-dd") + @"'
-                                    WHERE Teilenummer = '" + row.Teilenummer.Replace("'", "''") + "'";
-                DatabaseHelper.ExecuteQuery(sqlLager);
+                                    WHERE Teilenummer = '" + selectedItem.Teilenummer.Replace("'", "''") + "'";
+                    DatabaseHelper.ExecuteQuery(sqlLager);
 
-                // Warenausgang eintragen
-                string sqlAusgang = @"INSERT INTO Warenausgang (Buchungsdatum, Teilenummer, Menge, Projekt, Kunde, Status)
+                    // Warenausgang eintragen
+                    string sqlAusgang = @"INSERT INTO Warenausgang (Buchungsdatum, Teilenummer, Menge, Typ, Wert, Bezeichnung, Projekt, Kunde, Einzelpreis, Status)
                                       VALUES ('" + DateTime.Now.ToString("yyyy-MM-dd") + @"',
-                                              '" + row.Teilenummer.Replace("'", "''") + @"',
+                                              '" + selectedItem.Teilenummer.Replace("'", "''") + @"',
                                               " + ausbuchMenge + @",
+                                                '" + selectedItem.Typ.Replace("'", "''") + @"',
+                                                '" + selectedItem.Wert.Replace("'", "''") + @"',
+                                                '" + selectedItem.Bezeichnung.Replace("'", "''") + @"',
                                               '" + projekt.Replace("'", "''") + @"',
                                               '" + kunde.Replace("'", "''") + @"',
+                                                " + selectedItem.Einzelpreis.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture) + @",
                                               'gebucht')";
-                DatabaseHelper.ExecuteQuery(sqlAusgang);
+                    DatabaseHelper.ExecuteQuery(sqlAusgang);
+                }
+                MessageBox.Show("Ausgewählte Positionen wurden ausgebucht.");
+                Filter_SelectionChanged(null, null);
             }
+            //    var ausgewaehlt = ((List<LagerItem>)dgLager.ItemsSource)
+            //        .Where(x => x.IsSelected)
+            //        .ToList();
 
-            MessageBox.Show("Ausgewählte Positionen wurden ausgebucht.");
-            Filter_SelectionChanged(null, null);
+            //if (ausgewaehlt.Count == 0)
+            //{
+            //    MessageBox.Show("Bitte mindestens eine Position auswählen!");
+            //    return;
+            //}
+
+            //foreach (var row in ausgewaehlt)
+            //{
+                //WarenausgangDialog dialog = new WarenausgangDialog(
+                //    row.Teilenummer, row.Typ, row.Wert, row.Bezeichnung, row.Menge);
+                //if (dialog.ShowDialog() != true) continue;
+                //int ausbuchMenge = dialog.Menge;
+                //if (ausbuchMenge > row.Menge) ausbuchMenge = row.Menge;
+
+                //string projekt = dialog.Projekt;
+                //string kunde = dialog.Kunde;
+
+                // Lager aktualisieren
+                //int neueMenge = row.Menge - ausbuchMenge;
+                //string sqlLager = @"UPDATE Lager 
+                //                    SET Menge = " + neueMenge + @", letzte_Aktualisierung = '" + DateTime.Now.ToString("yyyy-MM-dd") + @"'
+                //                    WHERE Teilenummer = '" + row.Teilenummer.Replace("'", "''") + "'";
+                //DatabaseHelper.ExecuteQuery(sqlLager);
+
+                // Warenausgang eintragen
+                //string sqlAusgang = @"INSERT INTO Warenausgang (Buchungsdatum, Teilenummer, Menge, Projekt, Kunde, Status)
+                //                      VALUES ('" + DateTime.Now.ToString("yyyy-MM-dd") + @"',
+                //                              '" + row.Teilenummer.Replace("'", "''") + @"',
+                //                              " + ausbuchMenge + @",
+                //                              '" + projekt.Replace("'", "''") + @"',
+                //                              '" + kunde.Replace("'", "''") + @"',
+                //                              'gebucht')";
+                //DatabaseHelper.ExecuteQuery(sqlAusgang);
+            //}
+
+            //MessageBox.Show("Ausgewählte Positionen wurden ausgebucht.");
+            //Filter_SelectionChanged(null, null);
         }
         private void BtnResetFilter_Click(object sender, RoutedEventArgs e)
         {
